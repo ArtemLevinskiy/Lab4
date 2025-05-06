@@ -1,6 +1,4 @@
 import datetime
-today = datetime.date.today()
-# using gcd()
 class Date:
     """
     Description:
@@ -9,7 +7,7 @@ class Date:
         (Клас який працює з датами. Має такі методи як форматування, віднімання, додавання, порівняння,
         визначення високосного року, назву місяця і назву дня тижня)
     """
-    def __init__(self, day : int, month : int, year : int, description=""):
+    def __init__(self, day : int, month : int, year : int):
         """
         Description:
         Initializes a Date class object
@@ -18,7 +16,6 @@ class Date:
             day (int): day of the month (день місяця)
             month (int): month (місяць)
             year (int): year (рік)
-            description (str): date description, default is absent (опис дати, за замовчуванням відсутній)
         Raise:
             ValueError: if the day, month, or year do not match the correct values
             (якщо день, місяць чи рік не відповідають правильним значенням)
@@ -27,8 +24,6 @@ class Date:
         self._day = day
         self._month = month
         self._year = year
-        self._description = description
-
         if type(day) != int or type(month) != int or type(year) != int:
             raise TypeError("Дані повинні бути числовим значенням")
 
@@ -59,10 +54,7 @@ class Date:
         Return:
             str: in the format dd.mm.yyyy - description or dd.mm.yyyy (у форматі дд.мм.рррр - опис або дд.мм.рррр)
         """
-        if self._description:
-            return f"{self._day:02d}.{self._month:02d}.{self._year} - {self._description}"
-        else:
-            return f"{self._day:02d}.{self._month:02d}.{self._year}"
+        return f"{self._day:02d}.{self._month:02d}.{self._year}"
 
 
     def __sub__(self, other):
@@ -72,27 +64,33 @@ class Date:
         Return:
             int: difference in days between two dates (різниця в днях між двома датами)
         """
-        date = datetime.date(self._year, self._month, self._day)
-        difference = date - today
+        self_date = datetime.date(self._year, self._month, self._day)
+        other_date = datetime.date(other._year, other._month, other._day)
+        difference = self_date - other_date
         return difference.days
 
 
-    def __add__(self, days):
+    def __add__(self, other):
         """
         Description:
-            Adds a specified number of days to a date (Додає певну кількість днів до дати)
-        Args:
-            days (int): number of days to add (кількість днів для додавання)
-        Raises:
-            TypeError: if the days parameter is not an integer (якщо параметр days не є цілим числом)
+            Adds a specified number of days to a date (Додає дати між собою)
         Return:
-            str: new date after adding days (нова дата після додавання днів)
+            str: new date after adding days (нова дата після додавання)
         """
-        if type(days) != int:
-            raise TypeError("Додавати можна тільки ціле число днів")
-        date = datetime.date(self._year, self._month, self._day)
-        new_date = date + datetime.timedelta(days=days)
-        return Date(new_date.day, new_date.month, new_date.year, self._description)
+        self_date = datetime.date(self._year, self._month, self._day)
+        other_date = datetime.date(other._year, other._month, other._day)
+        new_day = self_date.day + other_date.day
+        new_month = self_date.month + other_date.month
+        new_year = self_date.year + other_date.year
+
+        if new_day > 31:
+            new_day -= 31
+            new_month += 1
+        if new_month > 12:
+            new_month -= 12
+            new_year += 1
+        return Date(new_day, new_month, new_year)
+
 
 
     def __gt__(self, other):
@@ -101,9 +99,12 @@ class Date:
             Compares two dates to see if one date is greater than the other
             (Порівнює дві дати, чи є дата більшою за іншу)
         Return:
-            str: string of compared dates (рядок, порівняних дат)
+            str: true or false depending on the comparison (true або false в залежності від порівняння)
         """
-        return (self._year, self._month, self._day) > (other._year, other._month, other._day)
+        self_date = datetime.date(self._year, self._month, self._day)
+        other_date = datetime.date(other._year, other._month, other._day)
+        difference = self_date > other_date
+        return difference
 
 
     def __eq__(self, other):
@@ -111,11 +112,12 @@ class Date:
         Description:
             Checks if a date is equal to today's date (Перевіряє, чи дата дорівнює сьогоднішній даті)
         Return:
-            str: displays whether that day has come (виводить чи настав цей день)
+            str: displays whether that day has come (true або false)
         """
-        date = datetime.date(self._year, self._month, self._day)
-        if date == today:
-            return f"Цей день настав"
+        self_date = datetime.date(self._year, self._month, self._day)
+        other_date = datetime.date(other._year, other._month, other._day)
+        difference = self_date == other_date
+        return difference
 
 
     def is_leap_year(self):
@@ -155,16 +157,18 @@ class Date:
 
 if __name__ == "__main__":
     try:
-        d1 = Date(16, 4, 2025, "Поїздка додому")
+        d1 = Date(16, 4, 2025)
         d2 = Date(29, 2, 2025)
-        d3 = Date(29, 4, 2025, "Захист лаби")
-        print(d3 - today)
-        print(d2 + 10)
+        d3 = Date(29, 4, 2025)
+        d4 = Date(12, 2,4)
+        print(d2 - d3)
+        print(d2 + d4)
         print(d1.is_leap_year())
-        print(d2.month_name())
+        print(d4.month_name())
         print(d3.day_of_week())
-        print(d1 > d2)
-        print(d2 == d3)
+        print(d2 > d1)
+        print(d3 > d1)
+        print(d1 == d3)
     except TypeError as e:
         print(e)
     except ValueError as e:
