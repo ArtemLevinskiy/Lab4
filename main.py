@@ -65,7 +65,7 @@ class Date:
             return f"{self._day:02d}.{self._month:02d}.{self._year}"
 
 
-    def __sub__(self, other):  # Сумнівно, можливо потрібно переробити
+    def __sub__(self, other):
         """
         Description:
             Determines the difference in days between two dates (Визначає різницю в днях між двома датами)
@@ -91,7 +91,7 @@ class Date:
         if type(days) != int:
             raise TypeError("Додавати можна тільки ціле число днів")
         date = datetime.date(self._year, self._month, self._day)
-        new_date = date + datetime.timedelta(days=days)         # days аргумент timedelta який дорівнює моїй зміні
+        new_date = date + datetime.timedelta(days=days)
         return Date(new_date.day, new_date.month, new_date.year, self._description)
 
 
@@ -137,7 +137,7 @@ class Date:
         """
         months_name = ["січня", "лютого", "березня", "квітня", "травня", "червня", "липня", "серпня",
                      "вересня", "жовтня", "листопада", "грудня"]
-        month_name = months_name[self._month - 1]       # -1 тому, що нумерація індекса починається з 0
+        month_name = months_name[self._month - 1]
         return f"{self._day} {month_name} {self._year} рік"
 
 
